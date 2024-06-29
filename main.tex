@@ -1,0 +1,404 @@
+\documentclass[11pt]{scrartcl}
+\usepackage[sexy]{evan}
+
+\begin{document}
+\title{Introduction to Barycentric Coordinates}
+% \subtitle{}
+\author{Trung Nguyen}
+\date{June 2024}
+\maketitle
+
+\begin{center}
+    "\textit{You always admire what you really don't understand}."
+    
+    -Blaise Pascal
+\end{center}
+
+% this is how to include images
+% \begin{center}
+%   \includegraphics[width=0.95\textwidth]{slang.jpg}
+% \end{center}
+
+% \begin{abstract}
+% The purpose of this document is to give the reader a guide on how to use Barycentric Coordinates to solve geometry problems. This is a very advanced technique, but this document should be approachable by all audiences. It is a rewrite of my original "Barycentric Coordinates Made Easy" handout at \url{https://artofproblemsolving.com/community/c4h2856275} because after four years I realized that it is very outdated and can use a major update. Massive thanks to Evan Chen for making evan.sty. Enjoy! 
+% \end{abstract}
+
+% \section*{Purpose}
+The purpose of this document is to give the reader a guide on how to use Barycentric Coordinates to solve geometry problems. This is a very advanced technique, but this document should be approachable by all audiences. It is a rewrite of my original "Barycentric Coordinates Made Easy" handout at \url{https://artofproblemsolving.com/community/c4h2856275} because after four years I realized that it is very outdated and can use a major update. Massive thanks to Evan Chen for making evan.sty. Enjoy! 
+
+
+% \alert{I do not recommend memorizing the names or configurations in this file}.
+% The reason is:
+% \begin{itemize}
+%   \ii They do not come up often enough to be worth learning for non-experts;
+%   \ii When they \emph{do} come up, experienced geometers can often figure
+%   the relevant facts on-the-spot anyway. Thus, the only real value is
+%   documenting the ``slang'' name for a fact that they could derive on their own.
+% \end{itemize}
+
+% \newpage
+
+\tableofcontents
+
+\newpage
+
+\section{The Basics}
+\subsection{The Reference Triangle and the Coordinate System}
+
+Like any other coordinate system (Cartesian, complex, polar...), Barycentric Coordinates have their own reference frames and their own coordinate system. \newline
+
+\begin{definition}
+  The reference frame when using Barycentric Coordinates is called the \emph{Reference Triangle}.
+\end{definition}
+
+Typically, for a problem that begins "In triangle $ABC$..." we tend to let $\triangle ABC$ be the reference triangle, but we can pick any three non-colinear points to form the reference triangle. 
+
+\begin{definition}
+  For a point $P$, its Barycentric Coordinates are of the form $(x,y,z)$ where $x+y+z=1$. We say $x$ the $A-$component, $y$ the $B-$component, and $z$ the $C-$component.
+\end{definition}
+
+\begin{fact}
+    The vertices of the reference triangle $\triangle ABC$ has coordinates $A=(1,0,0),B=(0,1,0),C=(0,0,1)$.
+\end{fact}
+
+Let's figure out how to find the coordinates of other points.   
+
+
+% \begin{theorem}
+%   [Reim's theorem]
+%   Fix two lines $m_1$ and $m_2$.
+%   Prove that if $\ell_1$ is antiparallel to $\ell_2$
+%   and $\ell_2$ is antiparallel to $\ell_3$,
+%   then lines $\ell_1$ and $\ell_3$ are either
+%   parallel or coincide.
+% \end{theorem}
+% \begin{proof}
+%   Because $\dang(m_1, \ell_1) = -\dang(m_2, \ell_2) = \dang(m_1, \ell_3)$.
+% \end{proof}
+
+% See \Cref{fig:reim}; the angles are highlighted in green.
+% You'll notice this is literally a two-step angle chase,
+% which means that for practical purposes,
+% \alert{whenever you see the name ``Reim's theorem'',
+% it's just a shorthand for a certain two-step anglechase}.
+
+% \begin{figure}[ht]
+%   \centering
+%   \begin{asy}
+%     size(10cm);
+%     pair A = dir(110);
+%     pair B = dir(70);
+%     pair C = dir(30);
+%     pair D = dir(180);
+%     pair P = extension(A,D,B,C);
+%     real k = 5;
+%     pair U = (k+1)*A-k*P;
+%     pair V = (k+1)*B-k*P;
+
+%     draw(U--P--V, red+1.5);
+%     draw(A--B, blue+1.5);
+%     draw(C--D, blue+1.5);
+%     draw(U--V, blue+1.5);
+%     draw(unitcircle, grey);
+%     draw(circumcircle(U, V, C), grey);
+%     dot(P);
+%     dot(A);
+%     dot(B);
+%     dot(C);
+%     dot(D);
+%     dot(U);
+%     dot(V);
+
+%     path anglemark(pair A, pair B, pair C, real t=8) {
+%       pair M,N,P[],Q[];
+%       path mark;
+%       M=t*0.03*unit(A-B)+B;
+%       N=t*0.03*unit(C-B)+B;
+%       mark=arc(B,M,N);
+%       mark=(mark--B--cycle);
+%       return mark;
+%     }
+%     filldraw(anglemark(B,A,P,6), opacity(0.2)+yellow, deepgreen);
+%     filldraw(anglemark(P,C,D,6), opacity(0.2)+yellow, deepgreen);
+%     filldraw(anglemark(V,U,P,6), opacity(0.2)+yellow, deepgreen);
+%   \end{asy}
+%   \caption{The three angles of Reim's theorem.}
+%   \label{fig:reim}
+% \end{figure}
+
+\subsection{Finding Coordinates}
+
+\begin{lemma}
+  Let $P$ be a point on side $BC$ of $\triangle ABC$ such that $BP=r$ and $PC=s$ (equivalently, $\frac{BP}{PC}=\frac{r}{s}$). Then the barycentric coordinates of $P$ are $(0,\frac{s}{r+s},\frac{r}{r+s})$ where lengths are directed.
+\end{lemma}
+
+\begin{figure}[ht]
+  \centering
+  \begin{asy}
+    size(10cm);
+pair A = (0,12);
+pair B = (-5,0);
+pair C = (9,0);
+pair P = (1,0);
+pair Q = (15,0);
+
+// Draw the main triangle
+draw(A--B--C--cycle);
+
+// Draw the dashed lines
+draw(C--Q--A--cycle, dashed);
+
+// Label the points
+label("$A$", A, dir(90)); // Placing the label A above the point
+label("$B$", B, dir(-90)); // Placing the label B below the point
+label("$C$", C, dir(-90)); // Placing the label C below the point
+label("$P$", P, dir(-90)); // Placing the label P below the point
+label("$Q$", Q, dir(0)); // Placing the label Q to the right of the point
+
+// Mark the points with smaller dots
+dot(A, 2bp);
+dot(B, 2bp);
+dot(C, 2bp);
+dot(P, 2bp);
+dot(Q, 2bp);
+  \end{asy}
+  \caption{Finding the coordinates of $P$ and $Q$.}
+  \label{fig:fig1}
+\end{figure}
+
+\begin{proof}
+    See \Cref{fig:fig1}. We know $\frac{BP}{PC}=\frac{r}{s}$. Now "pretend" that $BC$ is subdivided into $BC=BP+PC=r+s$ pieces each of length $\frac{1}{r+s}$ so that they add to $1$. \\
+    
+    Now, imagine sliding point $B$ to point $C$: when this happens, we get from $(0,1,0)$ to $(0,0,1)$. The $B-$component of point $B$ decreases from $1$ to $0$ and the $C-$component increases from $0$ to $1$. Notice that the $A-$component stays constant at $0$ since there is absolutely no $A-$ component in the segment $BC$. \\
+    
+    To get from $B$ to $P$, the $B-$component of point $B$ goes down from $1$ to $\frac{s}{r+s}$ while the $C-$coordinate of point $B$ goes up from $0$ to $\frac{r}{r+s}$. \\
+    
+    Hence, $P=(0,\frac{s}{r+s},\frac{r}{r+s})$. Notice that the components sum to $1$. 
+\end{proof}
+
+It is much more confusing when the point is outside the reference triangle, such as point $Q$. Fortunately, our lemma still holds if we use directed lengths. 
+
+\begin{exercise}
+    Let $BQ=t$ and $QC=u$. Find the Barycentric Coordinates of $Q$.
+\end{exercise}
+
+\begin{proof}
+  Since lengths are directed, we actually have $QC=-u$ as $Q$ is on ray $BC$; see \Cref{fig:fig1}. Then, by our lemma, we have $Q=(0,\frac{-u}{t-u},\frac{t}{t-u})$. Again, notice that the components sum to $1$.  
+\end{proof}
+
+We actually have a formula for the midpoint of two points using these ideas.
+
+\begin{theorem}
+[Midpoint Formula]
+    For any two points $P$ and $Q$ with Barycentric coordinates $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$, their midpoint $M$ is $M=(\frac{x_1+x_2}2,\frac{y_1+y_2}2,\frac{z_1+z_2}2)$.
+\end{theorem}
+
+\begin{proof}
+    Exercise for the reader. :)
+\end{proof}
+
+\subsection{The Area Formula}
+
+The power of Barycentric Coordinates is very apparent after seeing the area formula. Let $[ABC]$ denote the area of $\triangle ABC$. 
+
+\begin{theorem}
+    For any three points $P,Q,R$ with coordinates $(x_1,y_1,z_1),(x_2,y_2,z_2),(x_3,y_3,z_3)$, respectively, we have $|\frac{[PQR]}{[ABC]}|=
+\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}$ where $[ABC]$ is the area of the reference triangle.
+\end{theorem}
+
+Now, before you complete freak out because of the determinant, just know that the determinant is just short hand for $x_1(y_2z_3-z_2y_3)+y_1(z_2x_3-x_2z_3)+z_1(x_2y_3-y_2x_3)$.\\
+
+\begin{remark}
+    Notice that there are absolute values over the areas. This is because we are using signed areas which can be positive or negative depending on the order of the vertices. We don't have to worry about this as long as we remember to take the absolute value.
+\end{remark}
+
+Let's see this in practice.
+
+\begin{theorem}
+[Medial Triangle]
+    The area of the medial triangle of $\triangle ABC$ is $\frac 14 \cdot [ABC]$.
+\end{theorem}
+
+\begin{proof}
+    We apply Barycentric Coordinates with respect to $\triangle ABC$. $A=(1,0,0),B=(0,1,0),C=(0,0,1)$. Let the vertices of the medial triangle be $P,Q,R$. By the Barycentric midpoint formula, we have that $P=(\frac 12,\frac 12,0),Q=(\frac 12,0,\frac 12),R=(0,\frac 12,\frac 12)$. By the Barycentric area formula, we have $|\frac{[PQR]}{[ABC]}|=
+\begin{vmatrix}
+\frac 12 &\frac 12  &0 \\ 
+\frac 12 &0 &\frac 12 \\ 
+ 0& \frac 12 & \frac 12
+\end{vmatrix}=\frac 14$ as desired.
+\end{proof}
+    
+\subsection{Lines}
+
+\begin{theorem}
+[Barycentric Line]
+    The Barycentric equation of a line through two points, $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is given by $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$.
+\end{theorem}
+
+\begin{proof}
+What is a line? It is basically a triangle with area $0$. It is well known that two points define a line. Hence, the Barycentric equation of a line through two points, $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is given by
+        $\begin{vmatrix}
+x &y  &z \\ 
+x_{1} &y_{1}  &z_{1} \\ 
+ x_{2}& y_{2} & z_{2}
+\end{vmatrix}$ where the top row is any point $R=(x,y,z)$ on the line (the parameter). Expanding gives the desired result.
+\end{proof}
+
+This equation may look cluncky, but it works very nicely when the line goes through a vertex of the reference triangle.
+
+\begin{exercise}
+    In triangle $ABC$, let $P_{1}$ be on $AB$ such that $AP_1:BP_1=2:1$ and let $P_3$ is the midpoint of $AC$. $CP_1$ and $BP_2$ meet at $P_3$. Compute $\frac{[P_{1}P_{2}P_{3}]}{[ABC]}$.
+\end{exercise}
+
+ \begin{figure}[ht]
+  \centering
+  \begin{asy}
+ /* Geogebra to Asymptote conversion, documentation at artofproblemsolving.com/Wiki go to User:Azjps/geogebra */
+import graph; size(6cm); 
+real labelscalefactor = 0.5; /* changes label-to-point distance */
+pen dps = linewidth(0.7) + fontsize(10); defaultpen(dps); /* default pen style */ 
+pen dotstyle = black; /* point style */ 
+real xmin = -15.36, xmax = 15.36, ymin = -7, ymax = 7;  /* image dimensions */
+
+ /* draw figures */
+draw((-0.88,5.28)--(-6.46,-1.78)); 
+draw((-6.46,-1.78)--(5.52,-2.08)); 
+draw((5.52,-2.08)--(-0.88,5.28)); 
+draw((-4.6024071128673745,0.5702877747591999)--(5.52,-2.08)); 
+draw((2.32,1.6)--(-6.46,-1.78)); 
+draw((-4.6024071128673745,0.5702877747591999)--(2.32,1.6)); 
+ /* dots and labels */
+dot((-0.88,5.28),dotstyle); 
+label("$A$", (-0.8,5.48), NE * labelscalefactor); 
+dot((-6.46,-1.78),dotstyle); 
+label("$B$", (-6.38,-1.58), W * labelscalefactor); 
+dot((5.52,-2.08),dotstyle); 
+label("$C$", (5.6,-1.88), NE * labelscalefactor); 
+dot((-4.6024071128673745,0.5702877747591999),dotstyle); 
+label("$P_1$", (-4.52,0.78), W * labelscalefactor); 
+dot((2.32,1.6),linewidth(4pt) + dotstyle); 
+label("$P_3$", (2.4,1.76), NE * labelscalefactor); 
+
+label("$P_2$", (-2,0.06), NE * labelscalefactor); 
+clip((xmin,ymin)--(xmin,ymax)--(xmax,ymax)--(xmax,ymin)--cycle); 
+ /* end of picture */
+  \end{asy}
+  \caption{Diagram for Exercise.}
+  \label{fig:fig2}
+\end{figure}
+
+\begin{proof}
+See \Cref{fig:fig2}. Let $\bigtriangleup ABC$ be the reference triangle so that $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$.
+
+By the ratio of $2:1$, $P_{1}=(\frac{1}{3},\frac{2}{3},0)$. And $P_3$ is the midpoint, giving us $P_3=(\frac{1}{2},0,\frac{1}{2})$.\\
+
+We now use the equations for lines. The equation for $BP_3$ is $x-z=0$ (plug $B$ and $P_3$ in the line formula) and the equation for $CP_1$ is $2x-y=0$ (plug in $C$ and $P_1$). Therefore $P_2=(\frac{1}{4},\frac{1}{2},\frac{1}{4})$. This is obtained by solving the system 
+\begin{align}
+x-z&=0\\
+2x-y&=0\\
+x+y+z&=1
+\end{align} 
+
+as $P_2$ is the intersection of the two lines and we know the coordinates of $P_2$ must add to $1$.
+
+Since, $P_{1}=(\frac{1}{3},\frac{2}{3},0)$, $P_2=(\frac{1}{4},\frac{1}{2},\frac{1}{4})$, and $P_3=(\frac{1}{2},0,\frac{1}{2})$ we can plug them into the area formula to get $\frac{[P_{1}P_{2}P_{3}]}{[ABC]}=\begin{vmatrix}
+\frac{1}{3} &\frac{2}{3} &0 \\ 
+\frac{1}{4} &\frac{1}{2} &\frac{1}{4} \\ 
+\frac{1}{2}& 0 & \frac{1}{2}
+\end{vmatrix}=\frac{1}{12}$.
+\end{proof}
+
+
+
+\section{Examples}
+Let's Barybash a few AMC problems. 
+
+\subsection{Example 1 (\href{https://artofproblemsolving.com/community/c5h1955385}{2019 AMC 8 Problem 24})}
+\begin{problem}
+    In triangle $ABC$, point $D$ divides side $\overline{AC}$ so that $AD:DC=1:2$. Let $E$ be the midpoint of $\overline{BD}$ and let $F$ be the point of intersection of line $BC$ and line $AE$. Given that the area of $\triangle ABC$ is $360$, what is the area of $\triangle EBF$?
+\end{problem}
+
+\begin{proof}
+    We pick $\bigtriangleup ABC$ as our reference triangle. Then $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$. It is quite obvious that $D=(\frac 23 ,0,\frac 13)$ (NOT $D=(\frac 13 ,0,\frac 23)$).\\
+
+The coordinates of $E$ are easy since it is a midpoint. So $E=(\frac 13,\frac 12,\frac 16)$.\\
+
+To find the coordinates of $F$, use the equation of a line. We want to find $BC$ and $AE$ and have them intersect to find $F$.  The equation of a line through two points $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$. \\
+
+Put $B=(x,y,z) = (0,1,0)$ and $C=(x,y,z) = (0,0,1)$ into the equation to get $x = 0$. (This makes intuitive sense...there is no "$A$" component in $BC$.)\\
+
+Put $A=(1,0,0)$ and $E=(\frac 13,\frac 12,\frac 16)$ into the equation to get $y(-1*\frac 16)+z(1*\frac 12)=0 \Rightarrow \frac 16y=\frac 12z\Rightarrow y-3z=0$. \\
+
+To find $F$, we just need to solve $$x=0$$ $$y-3z=0$$ $$x+y+z=1$$. Solving this system, we find that the coordinates of $F$ will be $\left(0, \frac{3}{4}, \frac{1}{4} \right)$.\\
+
+In the Barycentric coordinate system, the area formula is $$[BEF]=\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}\cdot [ABC]$$
+
+Since, $B=(0,1,0)$, $E=(\frac 13,\frac 12,\frac 16)$, and $F=\left(0, \frac{3}{4}, \frac{1}{4} \right)$ we can plug them in to have $\frac{[BEF]}{[ABC]}=\begin{vmatrix}
+0&1 &0 \\ 
+\frac{1}{3} &\frac{1}{2} &\frac{1}{6} \\ 
+0&\frac{3}{4}&  \frac{1}{3} 
+\end{vmatrix}\Rightarrow \frac{[BEF]}{360}=\frac{1}{12}$ so $[BEF]=30$. 
+\end{proof}
+
+\subsection{Example 2 (\href{https://artofproblemsolving.com/community/c5h521757}{2013 AMC 10B Problem 16})}
+
+\begin{problem}
+In triangle $ABC$, medians $AD$ and $CE$ intersect at $P$, $PE=1.5$, $PD=2$, and $DE=2.5$. What is the area of $AEDC$?
+\end{problem}
+
+\begin{proof}
+    We pick $\bigtriangleup ABC$ as our reference triangle. Then $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$. Since points $D$ and $E$ are midpoints, we have $D=(0,\frac 12,\frac 12)$ and $E=(\frac 12,\frac 12,0)$. Since $P$ is the centroid, it has coordinates $P=(\frac13,\frac13,\frac13)$ (make sure you see why). \\
+    
+    By the Barycentric Area formula, we have $\frac{[EDP]}{[ABC]}=\begin{vmatrix}
+\frac 12 &\frac 12 &0 \\
+0 &\frac 12 &\frac 12 \\
+\frac 13& \frac 13&\frac 13
+\end{vmatrix} = \frac {1}{12}$ (if you got $-\frac {1}{12}$ it doesn't matter since the areas are signed). \\
+
+By Heron's Formula and the given side lengths, $[\triangle EDP]=\frac 32$ (or just notice the Pythagorean Triples and it is $\frac 12$ of the area of a $3-4-5$ triangle). Therefore, $[ABC]=18$. Drawing the midpoint of side $AC$ and calling it $F$, it is quite obvious that $DEF$ is a medial triangle. Hence, $[AEDC]=\frac 34 \cdot 18 = 13.5$.
+\end{proof}
+
+
+
+\subsection{Example 3 (\href{https://artofproblemsolving.com/community/c4h251367}{2004 AMC 10B Problem 20})}
+
+\begin{problem}
+In $\triangle ABC$ points $D$ and $E$ lie on $BC$ and $AC$, respectively. If $AD$ and $BE$ intersect at $T$ so that $\frac{AT}{DT}=3$ and $\frac{BT}{ET}=4$, what is $\frac{CD}{BD}$?
+\end{problem}
+
+\begin{proof}
+    Let our reference triangle be $\triangle BTD$ and let $B = (1,0,0), T = (0,1,0)$, and $D = (0,0,1)$ (Cool! The reference triangle is not $\triangle ABC$). \\
+
+From $D$ to $T$, the $x$ coordinate increases by $1$ and the $z$ coordinate decreases by $1$. Thus, from $T$ to $A$, the $x$ coordinate increases by $3$ and the $z$ coordinate decreases by $3$. Hence, $A=(0,4,-3)$. (Check that this makes sense.) \\
+
+From $B$ to $T$, the $x$ coordinate decreases by $1$ and the $y$ coordinate increases by $1$. Thus, from $T$ to $E$, the $x$ coordinate decreases by $\frac 14$ and the $y$ coordinate increases by $\frac 14$. Hence, $E=(-\frac 14,\frac 54,0)$. \\
+
+To find the coordinates of $C$, we need to find the intersection of lines $AE$ and $BD$. If a point lies on $BD$ then it satisfies $y=0$. If a point lies on $AE$ then it must satisfy $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$ for two points $A=(x_1,y_1,z_1)$ and $E=(x_2,y_2,z_2)$. Plugging in values, we obtain (since we know $y=0$) $x(-(-3)\frac 54)+z(-4*-\frac 14) \Rightarrow 15x+4z=0$. But $x+y+z=1 \Rightarrow x+z=1$ since $y=0$. Solving this system, we find that $x=-\frac{4}{11}$ and $z=\frac{15}{11}$ so $C=(-\frac{4}{11},0,\frac{15}{11})$. \\
+
+We finish with an obvious synthetic observation. Draw segment $TC$. Since they share an altitude, the ratio $\frac{CD}{BD}$ (what we want) is equal to the ratio of $\frac{[DTC]}{[BTD]}$. Using the Barycentric Area formula, we have $$\frac{[DTC]}{[BTD]}=\begin{vmatrix}
+0 &0 &1 \\
+0 &1 &0 \\
+-\frac {4}{11}& 0&\frac {15}{11}
+\end{vmatrix}=\frac{4}{11}.$$
+\end{proof}
+
+
+
+
+\section{Next Steps}
+
+This is just an Introduction to Barycentric Coordinates. For a much more detailed and advanced treatment of Barycentric Coordinates, refer to \href{https://web.evanchen.cc/handouts/bary/bary-full.pdf}{Evan Chen's handout}. \\
+
+To practice using Barycentric Coordinates, just solve as many problems you can. Anything involving ratios of lengths and areas in triangles can usually be solved with this technique. \href{https://artofproblemsolving.com/wiki/index.php/Mass_points}{This page} has a lot of good problems for you to try. Additionally, try proving famous theorems like Ceva's, Menalaus', Routh's and Stewart's using Barycentric Coordinates.\\
+
+Thanks for reading! :)
+
+\end{document}
